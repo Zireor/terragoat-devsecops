@@ -178,6 +178,9 @@ d'IP publique automatique).
 - **Détection de secrets en amont** : la *Push Protection* GitHub a bloqué les clés AWS
   dès le push initial, avant même la pipeline (défense en profondeur).
 - **Documentation rédigée au fil de l'eau** → traçabilité des décisions et des risques.
+- **Documentation-as-code** : la doc de l'infra (`TERRAFORM.md`) est **régénérée
+  automatiquement** par la pipeline (terraform-docs) à chaque push → elle reste toujours
+  synchrone avec le code, contrairement à une doc maintenue à la main.
 - **Correction de la cause plutôt que masquage** : l'erreur TFLint de syntaxe obsolète
   a été corrigée (modernisation), et non simplement ignorée.
 - **Politique de *gating* différenciée** : la pipeline échoue sur les **erreurs
@@ -218,7 +221,7 @@ qu'**artefacts** GitHub Actions (téléchargeables depuis l'onglet *Actions* →
 | Lint Terraform | TFLint | texte / compact |
 | Secrets | Gitleaks | JSON / SARIF |
 | Mauvaises configurations | Checkov | CLI / SARIF |
-| Documentation infra | terraform-docs | Markdown |
+| Documentation infra (`TERRAFORM.md` : providers / inputs / outputs) | terraform-docs | Markdown |
 
 _(Liens vers les runs et artefacts à ajouter une fois la pipeline complète.)_
 

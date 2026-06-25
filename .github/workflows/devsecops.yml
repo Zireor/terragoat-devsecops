@@ -93,16 +93,16 @@ jobs:
 
   docs:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
-      - name: Générer la doc Terraform
-        run: |
-          docker run --rm -v "$PWD:/tf" -w /tf quay.io/terraform-docs/terraform-docs:latest markdown table terraform/aws > terraform/aws/TERRAFORM.md
-
-      - name: Archiver la doc
-        if: always()
-        uses: actions/upload-artifact@v4
+      - name: Générer et commiter la doc Terraform
+        uses: terraform-docs/gh-actions@v1
         with:
-          name: terraform-docs
-          path: terraform/aws/TERRAFORM.md
+          working-dir: terraform/aws
+          output-file: TERRAFORM.md
+          output-method: replace
+          git-push: true
+          git-commit-message: "docs(terraform): mise à jour auto de TERRAFORM.md [skip ci]"
