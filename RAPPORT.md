@@ -28,7 +28,7 @@ Objectifs détaillés :
 | CI/CD | **GitHub Actions** | Gratuit/illimité en dépôt public, TerraGoat déjà sur GitHub |
 | Déploiement | **LocalStack** (AWS mocké) | Déploiement réel sans coût ni compte cloud |
 | Version Terraform | **Modernisée** (≥ 0.12) | TerraGoat utilise une syntaxe récente ; la 0.12 stricte serait un retour en arrière |
-| Scanners | **TFLint, Gitleaks, Checkov, tfsec** | Couverture qualité + secrets + mauvaises configs |
+| Scanners | **TFLint, Gitleaks, Checkov** | Couverture qualité + secrets + mauvaises configs |
 | Documentation | **terraform-docs** | Génération auto de la doc de l'infra |
 
 ---
@@ -39,7 +39,7 @@ Objectifs détaillés :
 |-------|-------|------|------------------|
 | `lint` | TFLint | Qualité / modernité du code Terraform | rapport lint |
 | `secrets` | Gitleaks | Détection de secrets en dur | rapport secrets |
-| `security` | Checkov (+ tfsec) | Mauvaises configurations de sécurité | rapports SARIF / JSON |
+| `security` | Checkov | Mauvaises configurations de sécurité | rapports SARIF / texte |
 | `docs` | terraform-docs | Documentation auto de l'infrastructure | README généré |
 | `deploy` | Terraform + LocalStack | Déploiement sur AWS mocké | logs de plan/apply |
 
@@ -143,6 +143,20 @@ signalé par TFLint comme *declared but not used* et a été retiré de
 > irréversible). En contexte d'entreprise, cette réécriture s'accompagnerait de la
 > **révocation** des secrets exposés auprès du fournisseur cloud.
 
+**Impact mesuré (scan Checkov avant / après corrections, framework Terraform) :**
+
+| | Contrôles réussis | Contrôles échoués |
+|---|-------------------|-------------------|
+| Avant | 115 | 213 |
+| **Après** | **181** | **170** |
+
+Soit **+66 contrôles conformes** et **-43 échecs**. Les **170 échecs résiduels**
+correspondent à des durcissements de second rang non exploitables directement
+(Multi-AZ, deletion protection, monitoring avancé, logging d'audit, clusters Aurora /
+Neptune / Elasticsearch / EKS hors périmètre applicatif) et sont **assumés** sur un
+dépôt volontairement vulnérable (cf. §9). Le job `secrets` (Gitleaks + Checkov secrets)
+est quant à lui **totalement vert** (CKV_SECRET_2 corrigé).
+
 **Principe directeur des corrections #10 à #18 — *secure by default* :**
 chaque correction supprime une exposition concrète (réseau, donnée en clair,
 sur-privilège) plutôt que de masquer l'alerte. On applique le **moindre privilège**
@@ -203,8 +217,7 @@ qu'**artefacts** GitHub Actions (téléchargeables depuis l'onglet *Actions* →
 |---------|-------|--------|
 | Lint Terraform | TFLint | texte / compact |
 | Secrets | Gitleaks | JSON / SARIF |
-| Mauvaises configurations | Checkov | CLI / SARIF / JSON |
-| Mauvaises configurations | tfsec | SARIF |
+| Mauvaises configurations | Checkov | CLI / SARIF |
 | Documentation infra | terraform-docs | Markdown |
 
 _(Liens vers les runs et artefacts à ajouter une fois la pipeline complète.)_

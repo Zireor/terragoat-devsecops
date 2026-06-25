@@ -90,3 +90,19 @@ jobs:
         with:
           name: checkov-report
           path: reports/
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Générer la doc Terraform
+        run: |
+          docker run --rm -v "$PWD:/tf" -w /tf quay.io/terraform-docs/terraform-docs:latest markdown table terraform/aws > terraform/aws/TERRAFORM.md
+
+      - name: Archiver la doc
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-docs
+          path: terraform/aws/TERRAFORM.md
