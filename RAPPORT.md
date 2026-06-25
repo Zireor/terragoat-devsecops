@@ -66,7 +66,26 @@ buckets publics, absence de chiffrement, etc.)_
 
 | # | Problème | Avant | Après |
 |---|----------|-------|-------|
-| 1 | Syntaxe `type` obsolète | `type = "string"` | `type = string` |
+| 1 | Syntaxe `type` obsolète (Terraform 0.11) | `type = "string"` | `type = string` |
+| 2 | Interpolations dépréciées (8 fichiers) | `"${var.ami}"` | `var.ami` |
+| 3 | Index déprécié | `.certificate_authority.0.data` | `.certificate_authority[0].data` |
+| 4 | Provider AWS avec clés en dur (inutilisé) | bloc `plain_text_access_keys_provider` | **supprimé** |
+
+Détail correction #1 : 4 occurrences corrigées dans `terraform/aws/consts.tf`
+(variables `ami`, `dbname`, `password`, `neptune-dbname`). Résultat : suppression des
+**4 erreurs fatales** TFLint (`Invalid quoted type constraints`) qui empêchaient
+l'analyse du module AWS.
+
+Détail corrections #2 et #3 : appliquées **automatiquement** via `tflint --fix`
+(exécuté en conteneur Docker, sans installation), sur tout le module `terraform/aws/`.
+Le diff a été **revu manuellement** avant commit (bonne pratique : ne jamais committer
+un auto-fix sans le relire).
+
+Détail correction #4 : le bloc provider contenant les clés AWS codées en dur
+(`AKIAIOSFODNN7EXAMPLE`) était signalé par TFLint comme *declared but not used* et a été
+retiré de `terraform/aws/providers.tf`. **Limite** : des clés en clair subsistent dans
+le `user_data` de `terraform/aws/ec2.tf` et dans l'historique git — leur traitement
+complet (révocation, nettoyage d'historique) est abordé au stage *secrets*.
 
 _(Section complétée au fil des corrections : suppression des secrets, chiffrement S3,
 blocage de l'accès public, restriction des Security Groups, etc.)_
@@ -86,6 +105,10 @@ blocage de l'accès public, restriction des Security Groups, etc.)_
 - **Documentation rédigée au fil de l'eau** → traçabilité des décisions et des risques.
 - **Correction de la cause plutôt que masquage** : l'erreur TFLint de syntaxe obsolète
   a été corrigée (modernisation), et non simplement ignorée.
+- **Politique de *gating* différenciée** : la pipeline échoue sur les **erreurs
+  bloquantes** mais tolère les **avertissements de style**
+  (`tflint --minimum-failure-severity=error`). On évite les faux blocages tout en
+  conservant la visibilité des warnings dans les logs.
 
 ---
 

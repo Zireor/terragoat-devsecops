@@ -117,11 +117,11 @@ resource aws_subnet "eks_subnet2" {
 
 resource aws_eks_cluster "eks_cluster" {
   name     = local.eks_name.value
-  role_arn = "${aws_iam_role.iam_for_eks.arn}"
+  role_arn = aws_iam_role.iam_for_eks.arn
 
   vpc_config {
     endpoint_private_access = true
-    subnet_ids              = ["${aws_subnet.eks_subnet1.id}", "${aws_subnet.eks_subnet2.id}"]
+    subnet_ids              = [aws_subnet.eks_subnet1.id, aws_subnet.eks_subnet2.id]
   }
 
   depends_on = [
@@ -141,9 +141,9 @@ resource aws_eks_cluster "eks_cluster" {
 }
 
 output "endpoint" {
-  value = "${aws_eks_cluster.eks_cluster.endpoint}"
+  value = aws_eks_cluster.eks_cluster.endpoint
 }
 
 output "kubeconfig-certificate-authority-data" {
-  value = "${aws_eks_cluster.eks_cluster.certificate_authority.0.data}"
+  value = aws_eks_cluster.eks_cluster.certificate_authority[0].data
 }
