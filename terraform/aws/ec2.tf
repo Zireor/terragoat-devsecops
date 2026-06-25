@@ -12,8 +12,6 @@ sudo apt-get update
 sudo apt-get install -y apache2
 sudo systemctl start apache2
 sudo systemctl enable apache2
-export AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_REDACTED
-export AWS_SECRET_ACCESS_KEY=AWS_SECRET_KEY_REDACTED
 export AWS_DEFAULT_REGION=us-west-2
 echo "<h1>Deployed via Terraform</h1>" | sudo tee /var/www/html/index.html
 EOF
@@ -34,7 +32,7 @@ EOF
 resource "aws_ebs_volume" "web_host_storage" {
   # unencrypted volume
   availability_zone = "${var.region}a"
-  #encrypted         = false  # Setting this causes the volume to be recreated on apply 
+  #encrypted         = false  # Setting this causes the volume to be recreated on apply
   size = 1
   tags = merge({
     Name = "${local.resource_prefix.value}-ebs"
