@@ -26,19 +26,36 @@ resource "aws_iam_user_policy" "userpolicy" {
   name = "excess_policy"
   user = aws_iam_user.user.name
 
+  # Moindre privilège : actions en lecture seule, limitées aux ressources nécessaires
   policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Sid": "ReadOnlyDescribe",
       "Action": [
-        "ec2:*",
-        "s3:*",
-        "lambda:*",
-        "cloudwatch:*"
+        "ec2:DescribeInstances",
+        "cloudwatch:GetMetricData"
       ],
       "Effect": "Allow",
-      "Resource": "*"
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${var.region}"
+        }
+      }
+    },
+    {
+      "Sid": "ScopedBucketAccess",
+      "Action": [
+        "s3:GetObject",
+        "s3:ListBucket"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "${aws_s3_bucket.operations.arn}",
+        "${aws_s3_bucket.operations.arn}/*"
+      ]
     }
   ]
 }

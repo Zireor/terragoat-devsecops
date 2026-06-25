@@ -15,11 +15,11 @@ resource "aws_db_instance" "default" {
   password                = var.password
   apply_immediately       = true
   multi_az                = false
-  backup_retention_period = 0
-  storage_encrypted       = false
+  backup_retention_period = 7
+  storage_encrypted       = true
   skip_final_snapshot     = true
   monitoring_interval     = 0
-  publicly_accessible     = true
+  publicly_accessible     = false
 
   tags = merge({
     Name        = "${local.resource_prefix.value}-rds"
@@ -207,18 +207,28 @@ resource "aws_iam_role_policy" "ec2policy" {
   name = "${local.resource_prefix.value}-policy"
   role = aws_iam_role.ec2role.id
 
+  # Moindre privilège : lecture seule sur les ressources nécessaires à l'app
   policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Sid": "ScopedRead",
       "Action": [
-        "s3:*",
-        "ec2:*",
-        "rds:*"
+        "s3:GetObject",
+        "ec2:DescribeInstances",
+        "rds:DescribeDBInstances"
       ],
       "Effect": "Allow",
-      "Resource": "*"
+      "Resource": [
+        "${aws_s3_bucket.data.arn}/*",
+        "*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${var.region}"
+        }
+      }
     }
   ]
 }

@@ -57,8 +57,29 @@ Objectifs détaillés :
 | 3 | Versions de providers non contraintes | Faible | TFLint | `terraform/*/provider.tf` |
 | 4 | Variables non typées | Faible | TFLint | `terraform/*/variables.tf` |
 
-_(Cette section sera complétée avec les résultats Checkov : exposition réseau,
-buckets publics, absence de chiffrement, etc.)_
+### Résultats Checkov (analyse des mauvaises configurations)
+
+Le scan Checkov a produit **115 contrôles réussis / 213 échoués** (Terraform), plus
+2 échecs Dockerfile et 1 secret (Lambda). Les échecs les plus **critiques** retenus
+pour correction :
+
+| # | Mauvaise configuration | Criticité | Check Checkov | Fichier |
+|---|------------------------|-----------|---------------|---------|
+| 5 | Secret AWS en dur dans la Lambda | **Critique** | CKV_SECRET_2 / CKV_AWS_45 | `lambda.tf` |
+| 6 | RDS exposée publiquement | **Critique** | CKV_AWS_17 | `db-app.tf` |
+| 7 | RDS / EBS / S3 non chiffrés au repos | **Élevée** | CKV_AWS_16 / 3 / 145 | `db-app.tf`, `ec2.tf`, `s3.tf` |
+| 8 | Security Group SSH+HTTP ouverts au monde (`0.0.0.0/0`) | **Critique** | CKV_AWS_24 / 260 | `ec2.tf` |
+| 9 | Buckets S3 sans Public Access Block | **Élevée** | CKV2_AWS_6 | `s3.tf`, `ec2.tf` |
+| 10 | Politiques IAM `*:*` (sur-privilège) | **Élevée** | CKV_AWS_355 / 290 | `iam.tf`, `db-app.tf` |
+| 11 | Subnets attribuant une IP publique par défaut | Moyenne | CKV_AWS_130 | `ec2.tf` |
+| 12 | KMS sans rotation de clé | Moyenne | CKV_AWS_7 | `kms.tf` |
+| 13 | ECR : tags mutables, pas de scan, pas de chiffrement | Moyenne | CKV_AWS_51 / 163 / 136 | `ecr.tf` |
+| 14 | RDS sans sauvegarde (`backup_retention_period = 0`) | Moyenne | CKV_AWS_133 | `db-app.tf` |
+
+> Le grand nombre d'échecs restants (logging, multi-AZ, deletion protection, audit,
+> backtracking Aurora…) est **attendu** sur TerraGoat (cf. §9) ; la correction se
+> concentre sur les risques exploitables à fort impact (exposition réseau, secrets,
+> chiffrement, sur-privilèges).
 
 ---
 
@@ -75,6 +96,15 @@ buckets publics, absence de chiffrement, etc.)_
 | 7 | Anti-pattern `null_resource` + `provisioner local-exec` | `null_resource "push_image"` (build/push Docker) | **supprimé** |
 | 8 | Clés AWS dans le `user_data` EC2 | `export AWS_ACCESS_KEY_ID=...` | retirées + commentaire « utiliser un rôle IAM » |
 | 9 | Secrets présents dans l'historique git (5 occurrences) | clés AWS + mots de passe DB dans d'anciens commits | **historique réécrit** (`git filter-repo`) → `no leaks found` |
+| 10 | Secret AWS en dur dans la Lambda | bloc `environment { access_key/secret_key }` | **supprimé** (la Lambda utilise son rôle IAM) ; runtime obsolète `nodejs12.x` → `nodejs18.x` |
+| 11 | RDS exposée et non sécurisée | `publicly_accessible = true`, `storage_encrypted = false`, `backup_retention_period = 0` | `false` / `true` / `7` |
+| 12 | Security Group ouvert au monde | ingress `0.0.0.0/0` ports 22 & 80 | restreint au CIDR du VPC + `description` ajoutée ; egress limité à 443 |
+| 13 | Volume EBS non chiffré | `#encrypted = false` (commenté) | `encrypted = true` |
+| 14 | Subnets avec IP publique auto | `map_public_ip_on_launch = true` | `false` (×2) |
+| 15 | Buckets S3 non chiffrés / publics | aucun chiffrement, pas de Public Access Block | SSE-KMS + `aws_s3_bucket_public_access_block` sur les 6 buckets (`data`, `financials`, `operations`, `data_science`, `logs`, `flowbucket`) + versioning |
+| 16 | Politiques IAM `*:*` | `Action: ["s3:*","ec2:*",...]`, `Resource: "*"` | actions **lecture seule** scopées + `Condition` région + ARN de bucket ciblé (`iam.tf`, `db-app.tf`) |
+| 17 | KMS sans rotation | (rotation absente) | `enable_key_rotation = true` |
+| 18 | ECR non durci | `image_tag_mutability = "MUTABLE"`, pas de scan ni chiffrement | `IMMUTABLE` + `scan_on_push = true` + `encryption_configuration` KMS |
 
 Détail correction #1 : 4 occurrences corrigées dans `terraform/aws/consts.tf`
 (variables `ami`, `dbname`, `password`, `neptune-dbname`). Résultat : suppression des
@@ -113,8 +143,13 @@ signalé par TFLint comme *declared but not used* et a été retiré de
 > irréversible). En contexte d'entreprise, cette réécriture s'accompagnerait de la
 > **révocation** des secrets exposés auprès du fournisseur cloud.
 
-_(Section complétée au fil des corrections : chiffrement S3, blocage de l'accès public,
-restriction des Security Groups, etc. — à venir avec Checkov.)_
+**Principe directeur des corrections #10 à #18 — *secure by default* :**
+chaque correction supprime une exposition concrète (réseau, donnée en clair,
+sur-privilège) plutôt que de masquer l'alerte. On applique le **moindre privilège**
+(IAM scopé en lecture seule + conditions), le **chiffrement au repos** systématique
+(KMS), le **blocage de l'accès public** (defense in depth : Public Access Block en plus
+des ACL privées) et la **réduction de la surface réseau** (SG restreint au VPC, plus
+d'IP publique automatique).
 
 ---
 
