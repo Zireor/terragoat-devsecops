@@ -70,6 +70,9 @@ buckets publics, absence de chiffrement, etc.)_
 | 2 | Interpolations dépréciées (8 fichiers) | `"${var.ami}"` | `var.ami` |
 | 3 | Index déprécié | `.certificate_authority.0.data` | `.certificate_authority[0].data` |
 | 4 | Provider AWS avec clés en dur (inutilisé) | bloc `plain_text_access_keys_provider` | **supprimé** |
+| 5 | Variables non typées (`consts.tf`) | `variable "region" {}` | `type = string` ajouté |
+| 6 | Versions de providers non contraintes | aucune | bloc `required_providers` (`aws ~> 5.0`) + `required_version >= 1.7` |
+| 7 | Anti-pattern `null_resource` + `provisioner local-exec` | `null_resource "push_image"` (build/push Docker) | **supprimé** |
 
 Détail correction #1 : 4 occurrences corrigées dans `terraform/aws/consts.tf`
 (variables `ami`, `dbname`, `password`, `neptune-dbname`). Résultat : suppression des
@@ -109,6 +112,13 @@ blocage de l'accès public, restriction des Security Groups, etc.)_
   bloquantes** mais tolère les **avertissements de style**
   (`tflint --minimum-failure-severity=error`). On évite les faux blocages tout en
   conservant la visibilité des warnings dans les logs.
+- **Contraintes de versions** (`required_version`, `required_providers`) → infra
+  reproductible et maîtrise de la chaîne d'approvisionnement des providers.
+- **Suppression des anti-patterns** : retrait du `null_resource` + `provisioner
+  local-exec` (build/push Docker), déconseillés par HashiCorp (« last resort »).
+  Terraform décrit de l'**état déclaratif**, pas des scripts impératifs.
+- **Outils exécutés en conteneur** (`docker run ghcr.io/.../tflint`) → pas
+  d'installation locale, environnement reproductible.
 
 ---
 
@@ -130,7 +140,22 @@ _(Liens vers les runs et artefacts à ajouter une fois la pipeline complète.)_
 
 ---
 
-## 8. Note sur le dépôt
+## 8. Périmètre du projet
+
+Le projet est volontairement **recentré sur le module AWS** (`terraform/aws/`) :
+- c'est le cloud effectivement **déployé** (sur LocalStack, qui émule AWS) ;
+- les modules `azure/`, `gcp/`, `oracle/`, `alicloud/` ont été **retirés** du dépôt pour
+  garder une chaîne CI/CD cohérente et lisible (un seul cloud analysé et déployé) ;
+- le dossier `gitlabci/` (configuration GitLab) a été supprimé car le projet utilise
+  **GitHub Actions**.
+
+Le module AWS contient à lui seul de nombreuses mauvaises configurations (S3 publics,
+RDS non chiffrés, Security Groups ouverts, secrets…), suffisantes pour démontrer la
+chaîne de détection et de correction.
+
+---
+
+## 9. Note sur le dépôt
 
 TerraGoat (`bridgecrewio/terragoat`) est un dépôt **volontairement vulnérable** conçu
 pour l'entraînement. Le grand nombre de vulnérabilités détectées est donc **attendu** :

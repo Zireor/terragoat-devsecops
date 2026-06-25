@@ -1,11 +1,10 @@
-
-provider "aws" {
-  profile = var.profile
-  region  = var.region
-}
-
 terraform {
-  backend "s3" {
-    encrypt = true
+  required_version = ">= 1.7.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
   }
 }

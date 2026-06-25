@@ -2,10 +2,12 @@
 data "aws_caller_identity" "current" {}
 
 variable "company_name" {
+  type    = string
   default = "acme"
 }
 
 variable "environment" {
+  type    = string
   default = "dev"
 }
 
@@ -17,11 +19,8 @@ locals {
 
 
 
-variable "profile" {
-  default = "default"
-}
-
 variable "region" {
+  type    = string
   default = "us-west-2"
 }
 
