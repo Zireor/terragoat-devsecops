@@ -68,3 +68,25 @@ jobs:
         with:
           name: gitleak-report
           path: reports/
+
+  security:
+    name: Analyse de sécurité IaC (Checkov)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@V4
+
+      - name: Préparer le dossier de rapports
+        run: mkdir -p reports
+
+      - name: Lancer Checkrov
+        run: |
+          set -o pipefail
+          docker run --rm -v "$PWD:/tf" -w /tf bridgecrew/checkov --directory terraform/aws --output cli --output sarif --output-file-path console,reports --soft-fail | tee reports/checkov-report.txt
+
+      - name: Conserver les rapports Checkov
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-report
+          path: reports/
