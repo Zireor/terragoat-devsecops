@@ -16,7 +16,30 @@ jobs:
       - name: Installer TFLint
         uses: terraform-linters/setup-tflint@v4
 
+      - name: Préparer le dossier de rapports
+        run: mkdir -p reports
+
       - name: Lancer TFlint
         run: |
           tflint --init
-          tflint --recursive --format compact
+          tflint --recursive --format compact | tee reports/tflint-raw.txt
+
+      - name: Formater le rapport en Markdown
+        if: always()
+        run: |
+          {
+            echo "# Rapport TFLint"
+            echo
+            echo "_Généré le $(date)_"
+            echo
+            echo '```'
+            cat reports/tflint-raw.txt
+            echo '```'
+          } > reports/tflint-report.md
+
+      - name: Conserver le rapport TFLint
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tflint-report
+          path: reports/tflint-report.md
