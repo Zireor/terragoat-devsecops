@@ -43,3 +43,26 @@ jobs:
         with:
           name: tflint-report
           path: reports/tflint-report.md
+
+  secrets:
+    name: Détection de secrets (Gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code (historique complet)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Préparer le dossier de rapports
+        run: mkdir -p reports
+
+      - name: Lancer Gitleaks
+        run: |
+          docker run --rm -v "$PWD:/repo" -w /repo ghcr.io/gitleaks/gitleaks:latest detect --source . --report-format sarif --report-path reports/gitleaks.sarif -redact -v | tee reports/gitleaks-report.txt
+
+      - name: Conserver les rapports Gitleaks
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitleak-report
+          path: reports/
