@@ -102,7 +102,7 @@ jobs:
         uses: terraform-docs/gh-actions@v1
         with:
           working-dir: terraform/aws
-          output-file: TERRAFORM.md
-          output-method: replace
+          output-file: README.md
+          output-method: inject
           git-push: true
-          git-commit-message: "docs(terraform): mise à jour auto de TERRAFORM.md [skip ci]"
+          git-commit-message: "docs(terraform): mise à jour auto de la doc [skip ci]"

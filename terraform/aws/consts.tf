@@ -2,13 +2,15 @@
 data "aws_caller_identity" "current" {}
 
 variable "company_name" {
-  type    = string
-  default = "acme"
+  type        = string
+  description = "Nom de l'entreprise, utilisé comme préfixe de nommage des ressources."
+  default     = "acme"
 }
 
 variable "environment" {
-  type    = string
-  default = "dev"
+  type        = string
+  description = "Environnement de déploiement (ex. dev, staging, prod)."
+  default     = "dev"
 }
 
 locals {
@@ -20,13 +22,15 @@ locals {
 
 
 variable "region" {
-  type    = string
-  default = "us-west-2"
+  type        = string
+  description = "Région AWS cible pour le déploiement des ressources."
+  default     = "us-west-2"
 }
 
 variable "ami" {
-  type    = string
-  default = "ami-09a5b0b7edf08843d"
+  type        = string
+  description = "ID de l'AMI utilisée pour les instances EC2."
+  default     = "ami-09a5b0b7edf08843d"
 }
 
 variable "dbname" {
