@@ -119,6 +119,12 @@ blocage de l'accès public, restriction des Security Groups, etc.)_
   Terraform décrit de l'**état déclaratif**, pas des scripts impératifs.
 - **Outils exécutés en conteneur** (`docker run ghcr.io/.../tflint`) → pas
   d'installation locale, environnement reproductible.
+- **Gating fiable avec `set -o pipefail`** : un piège a été identifié — une commande
+  `outil | tee rapport.txt` renvoie par défaut le code de sortie de `tee` (0), masquant
+  l'échec de l'outil. Concrètement, le job Gitleaks passait **au vert alors que
+  5 secrets étaient détectés** (faux négatif de gating). Corrigé avec `set -o pipefail`
+  pour que le pipe propage le vrai code d'erreur. Leçon : **ne jamais se fier à un
+  statut vert sans vérifier la sortie réelle de l'outil.**
 
 ---
 

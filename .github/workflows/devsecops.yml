@@ -21,6 +21,7 @@ jobs:
 
       - name: Lancer TFlint
         run: |
+          set -o pipefail
           tflint --init
           tflint --recursive --format compact | tee reports/tflint-raw.txt
 
@@ -58,6 +59,7 @@ jobs:
 
       - name: Lancer Gitleaks
         run: |
+          set -o pipefail
           docker run --rm -v "$PWD:/repo" -w /repo ghcr.io/gitleaks/gitleaks:latest detect --source . --report-format sarif --report-path reports/gitleaks.sarif -redact -v | tee reports/gitleaks-report.txt
 
       - name: Conserver les rapports Gitleaks
