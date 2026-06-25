@@ -73,6 +73,8 @@ buckets publics, absence de chiffrement, etc.)_
 | 5 | Variables non typées (`consts.tf`) | `variable "region" {}` | `type = string` ajouté |
 | 6 | Versions de providers non contraintes | aucune | bloc `required_providers` (`aws ~> 5.0`) + `required_version >= 1.7` |
 | 7 | Anti-pattern `null_resource` + `provisioner local-exec` | `null_resource "push_image"` (build/push Docker) | **supprimé** |
+| 8 | Clés AWS dans le `user_data` EC2 | `export AWS_ACCESS_KEY_ID=...` | retirées + commentaire « utiliser un rôle IAM » |
+| 9 | Secrets présents dans l'historique git (5 occurrences) | clés AWS + mots de passe DB dans d'anciens commits | **historique réécrit** (`git filter-repo`) → `no leaks found` |
 
 Détail correction #1 : 4 occurrences corrigées dans `terraform/aws/consts.tf`
 (variables `ami`, `dbname`, `password`, `neptune-dbname`). Résultat : suppression des
@@ -84,14 +86,35 @@ Détail corrections #2 et #3 : appliquées **automatiquement** via `tflint --fix
 Le diff a été **revu manuellement** avant commit (bonne pratique : ne jamais committer
 un auto-fix sans le relire).
 
-Détail correction #4 : le bloc provider contenant les clés AWS codées en dur
-(`AKIAIOSFODNN7EXAMPLE`) était signalé par TFLint comme *declared but not used* et a été
-retiré de `terraform/aws/providers.tf`. **Limite** : des clés en clair subsistent dans
-le `user_data` de `terraform/aws/ec2.tf` et dans l'historique git — leur traitement
-complet (révocation, nettoyage d'historique) est abordé au stage *secrets*.
+Détail correction #4 : le bloc provider contenant les clés AWS codées en dur était
+signalé par TFLint comme *declared but not used* et a été retiré de
+`terraform/aws/providers.tf`.
 
-_(Section complétée au fil des corrections : suppression des secrets, chiffrement S3,
-blocage de l'accès public, restriction des Security Groups, etc.)_
+**Détail corrections #8 et #9 — éradication des secrets (stage `secrets` / Gitleaks) :**
+
+1. **Détection** : le job Gitleaks (scan de tout l'historique, `fetch-depth: 0`) a
+   identifié **5 secrets** : les clés AWS du `user_data` de `ec2.tf` et 3 mots de passe
+   de base de données dans des fichiers Azure d'anciens commits.
+2. **Correction du code actuel** : les clés AWS ont été retirées du `user_data` de
+   `terraform/aws/ec2.tf` (bonne pratique : utiliser un **rôle IAM / instance profile**
+   plutôt que des identifiants statiques).
+3. **Constat clé** : retirer un secret du code **ne suffit pas** — il reste dans
+   l'historique git (« un secret commité une fois est compromis »).
+4. **Remédiation complète de l'historique** : réécriture de l'historique avec
+   **`git filter-repo`** :
+   - `--replace-text` pour remplacer les valeurs des secrets par des placeholders dans
+     **tous les commits** ;
+   - `--path terraform/azure --invert-paths` pour purger les fichiers Azure (déjà hors
+     périmètre) qui contenaient les mots de passe.
+   - Suivi d'un **force-push** de l'historique réécrit.
+5. **Vérification** : nouveau scan Gitleaks → **`no leaks found`** (239 commits).
+
+> Note : une sauvegarde du dépôt a été réalisée avant la réécriture (opération
+> irréversible). En contexte d'entreprise, cette réécriture s'accompagnerait de la
+> **révocation** des secrets exposés auprès du fournisseur cloud.
+
+_(Section complétée au fil des corrections : chiffrement S3, blocage de l'accès public,
+restriction des Security Groups, etc. — à venir avec Checkov.)_
 
 ---
 
@@ -112,6 +135,13 @@ blocage de l'accès public, restriction des Security Groups, etc.)_
   bloquantes** mais tolère les **avertissements de style**
   (`tflint --minimum-failure-severity=error`). On évite les faux blocages tout en
   conservant la visibilité des warnings dans les logs.
+- **Scan de secrets sur tout l'historique** (`fetch-depth: 0`) → un secret supprimé du
+  code actuel mais présent dans d'anciens commits reste détecté.
+- **Remédiation profonde des secrets** : au-delà du retrait dans le code, réécriture de
+  l'historique (`git filter-repo`) pour éradiquer les secrets de tous les commits —
+  illustre le principe « un secret commité une fois est compromis ».
+- **Secrets masqués dans les logs CI** (`gitleaks --redact`) → on ne réaffiche jamais un
+  secret en clair dans la sortie de la pipeline.
 - **Contraintes de versions** (`required_version`, `required_providers`) → infra
   reproductible et maîtrise de la chaîne d'approvisionnement des providers.
 - **Suppression des anti-patterns** : retrait du `null_resource` + `provisioner
