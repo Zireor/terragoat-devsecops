@@ -74,7 +74,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Récupérer le code
-        uses: actions/checkout@V4
+        uses: actions/checkout@v4
 
       - name: Préparer le dossier de rapports
         run: mkdir -p reports
