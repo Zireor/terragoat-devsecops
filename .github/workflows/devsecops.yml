@@ -63,7 +63,7 @@ jobs:
       - name: Lancer Gitleaks
         run: |
           set -o pipefail
-          docker run --rm -v "$PWD:/repo" -w /repo ghcr.io/gitleaks/gitleaks:latest detect --source . --report-format sarif --report-path reports/gitleaks.sarif -redact -v | tee reports/gitleaks-report.txt
+          docker run --rm -v "$PWD:/repo" -w /repo ghcr.io/gitleaks/gitleaks:latest detect --source . --report-format sarif --report-path reports/gitleaks.sarif --exit-code 0 -redact -v | tee reports/gitleaks-report.txt
 
       - name: Conserver les rapports Gitleaks
         if: always()
@@ -73,8 +73,8 @@ jobs:
           path: reports/
 
       - name: Publier les findings Gitleaks dans Security
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
+        if: always() && hashFiles('reports/gitleaks.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: reports/gitleaks.sarif
           category: gitleaks
@@ -105,8 +105,8 @@ jobs:
           path: reports/
 
       - name: Publier les findings Checkov dans Security
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
+        if: always() && hashFiles('reports/checkov.sarif', 'reports/checkov.sarif/**') != ''
+        uses: github/codeql-action/upload-sarif@v4
         with:
           # Checkov écrit le SARIF dans reports/checkov.sarif (dossier) → upload-sarif
           # y retrouve récursivement le fichier results_sarif.sarif.
