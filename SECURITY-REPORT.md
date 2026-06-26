@@ -1,6 +1,6 @@
 # Rapport de sécurité consolidé
 
-_Généré le Fri Jun 26 14:57:48 UTC 2026 — agrégation Checkov + Gitleaks (SARIF)._
+_Généré le Fri Jun 26 15:17:31 UTC 2026 — agrégation Checkov + Gitleaks (SARIF)._
 
 **Total de findings : 172**
 
