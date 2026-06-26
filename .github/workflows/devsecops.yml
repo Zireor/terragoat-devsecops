@@ -114,7 +114,7 @@ jobs:
           category: checkov
 
   deploy:
-    name: Déploiement LocalStack (S3/IAM/KMS/ECR/EC2)
+    name: Déploiement LocalStack (S3/IAM/KMS/EC2)
     runs-on: ubuntu-latest
     needs: [lint, secrets, security]
 
@@ -130,7 +130,7 @@ jobs:
           # sts est INDISPENSABLE : le provider AWS appelle GetCallerIdentity au
           # démarrage (et data.aws_caller_identity l'utilise). Sans lui, l'apply
           # part en retry infini sur des erreurs InternalFailure.
-          SERVICES: s3,iam,kms,ecr,ec2,sts
+          SERVICES: s3,iam,kms,ec2,sts
 
     steps:
       - name: Récupérer le code
@@ -155,7 +155,7 @@ jobs:
           # Sanity check : STS doit répondre (sinon le provider boucle en retry).
           awslocal sts get-caller-identity
 
-          # --- Phase 1 : ressources rapides et 100% supportées (S3/IAM/KMS/ECR) ---
+          # --- Phase 1 : ressources rapides et 100% supportées (S3/IAM/KMS) ---
           timeout 300 tflocal apply -auto-approve \
             -target=aws_s3_bucket.data \
             -target=aws_s3_bucket.financials \
@@ -173,12 +173,11 @@ jobs:
             -target=aws_iam_user.user \
             -target=aws_iam_access_key.user \
             -target=aws_iam_user_policy.userpolicy \
-            -target=aws_ecr_repository.repository \
             | tee ../../reports/localstack-apply.txt
 
           # --- Phase 2 : EC2, borné à 4 min (LocalStack Community ne fait pas
           # toujours passer l'instance en "running"). On NE casse PAS le job si ça
-          # dépasse : la démo reste verte avec S3/IAM/KMS/ECR déjà créés.
+          # dépasse : la démo reste verte avec S3/IAM/KMS déjà créés.
           timeout 240 tflocal apply -auto-approve \
             -target=aws_instance.web_host \
             -target=aws_ebs_volume.web_host_storage \
@@ -195,7 +194,6 @@ jobs:
             echo "## Buckets S3"   ; awslocal s3 ls
             echo "## Clés KMS"     ; awslocal kms list-keys
             echo "## Utilisateurs IAM"; awslocal iam list-users
-            echo "## Dépôts ECR"   ; awslocal ecr describe-repositories
             echo "## Instances EC2"; awslocal ec2 describe-instances --query 'Reservations[].Instances[].InstanceId'
           } | tee reports/localstack-verify.txt
 
