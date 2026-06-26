@@ -145,12 +145,23 @@ jobs:
       # tflocal injecte tout seul les endpoints LocalStack + des credentials factices.
       - name: Déployer sur LocalStack (apply ciblé)
         working-directory: terraform/aws
+        env:
+          TF_LOG: INFO   # montre chaque appel API → révèle où ça coince
         run: |
           set -o pipefail
           tflocal init
 
+          # --- Diagnostic : LocalStack répond-il vraiment ? ---
+          echo "### Health LocalStack ###"
+          curl -s http://localhost:4566/_localstack/health | head -c 2000 || true
+          echo
+          echo "### Test STS (data.aws_caller_identity) ###"
+          timeout 30 awslocal sts get-caller-identity || echo "STS KO/timeout"
+          echo "### Test S3 ###"
+          timeout 30 awslocal s3 ls || echo "S3 KO/timeout"
+
           # --- Phase 1 : ressources rapides et 100% supportées (S3/IAM/KMS/ECR) ---
-          tflocal apply -auto-approve \
+          timeout 300 tflocal apply -auto-approve \
             -target=aws_s3_bucket.data \
             -target=aws_s3_bucket.financials \
             -target=aws_s3_bucket.operations \
