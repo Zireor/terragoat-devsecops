@@ -121,7 +121,9 @@ jobs:
     # LocalStack tourne comme service à côté du job, sur le port 4566.
     services:
       localstack:
-        image: localstack/localstack:latest
+        # Tag épinglé sur une version Community (sans LOCALSTACK_AUTH_TOKEN) :
+        # le tag :latest exige désormais une licence/token et refuse de démarrer.
+        image: localstack/localstack:3
         ports:
           - 4566:4566
         env:
