@@ -1,6 +1,6 @@
 # Rapport de sécurité consolidé
 
-_Généré le Fri Jun 26 12:41:32 UTC 2026 — agrégation Checkov + Gitleaks (SARIF)._
+_Généré le Fri Jun 26 13:03:00 UTC 2026 — agrégation Checkov + Gitleaks (SARIF)._
 
 **Total de findings : 172**
 
@@ -29,14 +29,14 @@ _Généré le Fri Jun 26 12:41:32 UTC 2026 — agrégation Checkov + Gitleaks (S
 | HIGH | Checkov | `CKV2_AWS_64` | `terraform/aws/kms.tf` | 1 | Ensure KMS key Policy is defined |
 | HIGH | Checkov | `CKV2_AWS_69` | `terraform/aws/db-app.tf` | 1 | Ensure AWS RDS database instance configured with encryption in transit |
 | HIGH | Checkov | `CKV2_AWS_8` | `terraform/aws/rds.tf` | 1 | Ensure that RDS clusters has backup plan of AWS Backup |
-| HIGH | Checkov | `CKV2_AWS_8` | `terraform/aws/rds.tf` | 113 | Ensure that RDS clusters has backup plan of AWS Backup |
-| HIGH | Checkov | `CKV2_AWS_8` | `terraform/aws/rds.tf` | 130 | Ensure that RDS clusters has backup plan of AWS Backup |
-| HIGH | Checkov | `CKV2_AWS_8` | `terraform/aws/rds.tf` | 17 | Ensure that RDS clusters has backup plan of AWS Backup |
-| HIGH | Checkov | `CKV2_AWS_8` | `terraform/aws/rds.tf` | 33 | Ensure that RDS clusters has backup plan of AWS Backup |
-| HIGH | Checkov | `CKV2_AWS_8` | `terraform/aws/rds.tf` | 49 | Ensure that RDS clusters has backup plan of AWS Backup |
-| HIGH | Checkov | `CKV2_AWS_8` | `terraform/aws/rds.tf` | 65 | Ensure that RDS clusters has backup plan of AWS Backup |
-| HIGH | Checkov | `CKV2_AWS_8` | `terraform/aws/rds.tf` | 81 | Ensure that RDS clusters has backup plan of AWS Backup |
-| HIGH | Checkov | `CKV2_AWS_8` | `terraform/aws/rds.tf` | 97 | Ensure that RDS clusters has backup plan of AWS Backup |
+| HIGH | Checkov | `CKV2_AWS_8` | `terraform/aws/rds.tf` | 103 | Ensure that RDS clusters has backup plan of AWS Backup |
+| HIGH | Checkov | `CKV2_AWS_8` | `terraform/aws/rds.tf` | 120 | Ensure that RDS clusters has backup plan of AWS Backup |
+| HIGH | Checkov | `CKV2_AWS_8` | `terraform/aws/rds.tf` | 138 | Ensure that RDS clusters has backup plan of AWS Backup |
+| HIGH | Checkov | `CKV2_AWS_8` | `terraform/aws/rds.tf` | 18 | Ensure that RDS clusters has backup plan of AWS Backup |
+| HIGH | Checkov | `CKV2_AWS_8` | `terraform/aws/rds.tf` | 35 | Ensure that RDS clusters has backup plan of AWS Backup |
+| HIGH | Checkov | `CKV2_AWS_8` | `terraform/aws/rds.tf` | 52 | Ensure that RDS clusters has backup plan of AWS Backup |
+| HIGH | Checkov | `CKV2_AWS_8` | `terraform/aws/rds.tf` | 69 | Ensure that RDS clusters has backup plan of AWS Backup |
+| HIGH | Checkov | `CKV2_AWS_8` | `terraform/aws/rds.tf` | 86 | Ensure that RDS clusters has backup plan of AWS Backup |
 | HIGH | Checkov | `CKV_AWS_101` | `terraform/aws/neptune.tf` | 1 | Ensure Neptune logging is enabled |
 | HIGH | Checkov | `CKV_AWS_109` | `terraform/aws/es.tf` | 30 | Ensure IAM policies does not allow permissions management / resource exposure without constraints |
 | HIGH | Checkov | `CKV_AWS_111` | `terraform/aws/es.tf` | 30 | Ensure IAM policies does not allow write access without constraints |
@@ -55,14 +55,14 @@ _Généré le Fri Jun 26 12:41:32 UTC 2026 — agrégation Checkov + Gitleaks (S
 | HIGH | Checkov | `CKV_AWS_135` | `terraform/aws/ec2.tf` | 1 | Ensure that EC2 is EBS optimized |
 | HIGH | Checkov | `CKV_AWS_137` | `terraform/aws/es.tf` | 1 | Ensure that Elasticsearch is configured inside a VPC |
 | HIGH | Checkov | `CKV_AWS_139` | `terraform/aws/rds.tf` | 1 | Ensure that RDS clusters have deletion protection enabled |
-| HIGH | Checkov | `CKV_AWS_139` | `terraform/aws/rds.tf` | 113 | Ensure that RDS clusters have deletion protection enabled |
-| HIGH | Checkov | `CKV_AWS_139` | `terraform/aws/rds.tf` | 130 | Ensure that RDS clusters have deletion protection enabled |
-| HIGH | Checkov | `CKV_AWS_139` | `terraform/aws/rds.tf` | 17 | Ensure that RDS clusters have deletion protection enabled |
-| HIGH | Checkov | `CKV_AWS_139` | `terraform/aws/rds.tf` | 33 | Ensure that RDS clusters have deletion protection enabled |
-| HIGH | Checkov | `CKV_AWS_139` | `terraform/aws/rds.tf` | 49 | Ensure that RDS clusters have deletion protection enabled |
-| HIGH | Checkov | `CKV_AWS_139` | `terraform/aws/rds.tf` | 65 | Ensure that RDS clusters have deletion protection enabled |
-| HIGH | Checkov | `CKV_AWS_139` | `terraform/aws/rds.tf` | 81 | Ensure that RDS clusters have deletion protection enabled |
-| HIGH | Checkov | `CKV_AWS_139` | `terraform/aws/rds.tf` | 97 | Ensure that RDS clusters have deletion protection enabled |
+| HIGH | Checkov | `CKV_AWS_139` | `terraform/aws/rds.tf` | 103 | Ensure that RDS clusters have deletion protection enabled |
+| HIGH | Checkov | `CKV_AWS_139` | `terraform/aws/rds.tf` | 120 | Ensure that RDS clusters have deletion protection enabled |
+| HIGH | Checkov | `CKV_AWS_139` | `terraform/aws/rds.tf` | 138 | Ensure that RDS clusters have deletion protection enabled |
+| HIGH | Checkov | `CKV_AWS_139` | `terraform/aws/rds.tf` | 18 | Ensure that RDS clusters have deletion protection enabled |
+| HIGH | Checkov | `CKV_AWS_139` | `terraform/aws/rds.tf` | 35 | Ensure that RDS clusters have deletion protection enabled |
+| HIGH | Checkov | `CKV_AWS_139` | `terraform/aws/rds.tf` | 52 | Ensure that RDS clusters have deletion protection enabled |
+| HIGH | Checkov | `CKV_AWS_139` | `terraform/aws/rds.tf` | 69 | Ensure that RDS clusters have deletion protection enabled |
+| HIGH | Checkov | `CKV_AWS_139` | `terraform/aws/rds.tf` | 86 | Ensure that RDS clusters have deletion protection enabled |
 | HIGH | Checkov | `CKV_AWS_144` | `terraform/aws/ec2.tf` | 268 | Ensure that S3 bucket has cross-region replication enabled |
 | HIGH | Checkov | `CKV_AWS_144` | `terraform/aws/s3.tf` | 1 | Ensure that S3 bucket has cross-region replication enabled |
 | HIGH | Checkov | `CKV_AWS_144` | `terraform/aws/s3.tf` | 110 | Ensure that S3 bucket has cross-region replication enabled |
@@ -72,14 +72,14 @@ _Généré le Fri Jun 26 12:41:32 UTC 2026 — agrégation Checkov + Gitleaks (S
 | HIGH | Checkov | `CKV_AWS_157` | `terraform/aws/db-app.tf` | 1 | Ensure that RDS instances have Multi-AZ enabled |
 | HIGH | Checkov | `CKV_AWS_161` | `terraform/aws/db-app.tf` | 1 | Ensure RDS database has IAM authentication enabled |
 | HIGH | Checkov | `CKV_AWS_162` | `terraform/aws/rds.tf` | 1 | Ensure RDS cluster has IAM authentication enabled |
-| HIGH | Checkov | `CKV_AWS_162` | `terraform/aws/rds.tf` | 113 | Ensure RDS cluster has IAM authentication enabled |
-| HIGH | Checkov | `CKV_AWS_162` | `terraform/aws/rds.tf` | 130 | Ensure RDS cluster has IAM authentication enabled |
-| HIGH | Checkov | `CKV_AWS_162` | `terraform/aws/rds.tf` | 17 | Ensure RDS cluster has IAM authentication enabled |
-| HIGH | Checkov | `CKV_AWS_162` | `terraform/aws/rds.tf` | 33 | Ensure RDS cluster has IAM authentication enabled |
-| HIGH | Checkov | `CKV_AWS_162` | `terraform/aws/rds.tf` | 49 | Ensure RDS cluster has IAM authentication enabled |
-| HIGH | Checkov | `CKV_AWS_162` | `terraform/aws/rds.tf` | 65 | Ensure RDS cluster has IAM authentication enabled |
-| HIGH | Checkov | `CKV_AWS_162` | `terraform/aws/rds.tf` | 81 | Ensure RDS cluster has IAM authentication enabled |
-| HIGH | Checkov | `CKV_AWS_162` | `terraform/aws/rds.tf` | 97 | Ensure RDS cluster has IAM authentication enabled |
+| HIGH | Checkov | `CKV_AWS_162` | `terraform/aws/rds.tf` | 103 | Ensure RDS cluster has IAM authentication enabled |
+| HIGH | Checkov | `CKV_AWS_162` | `terraform/aws/rds.tf` | 120 | Ensure RDS cluster has IAM authentication enabled |
+| HIGH | Checkov | `CKV_AWS_162` | `terraform/aws/rds.tf` | 138 | Ensure RDS cluster has IAM authentication enabled |
+| HIGH | Checkov | `CKV_AWS_162` | `terraform/aws/rds.tf` | 18 | Ensure RDS cluster has IAM authentication enabled |
+| HIGH | Checkov | `CKV_AWS_162` | `terraform/aws/rds.tf` | 35 | Ensure RDS cluster has IAM authentication enabled |
+| HIGH | Checkov | `CKV_AWS_162` | `terraform/aws/rds.tf` | 52 | Ensure RDS cluster has IAM authentication enabled |
+| HIGH | Checkov | `CKV_AWS_162` | `terraform/aws/rds.tf` | 69 | Ensure RDS cluster has IAM authentication enabled |
+| HIGH | Checkov | `CKV_AWS_162` | `terraform/aws/rds.tf` | 86 | Ensure RDS cluster has IAM authentication enabled |
 | HIGH | Checkov | `CKV_AWS_186` | `terraform/aws/s3.tf` | 30 | Ensure S3 bucket Object is encrypted by KMS using a customer managed Key (CMK) |
 | HIGH | Checkov | `CKV_AWS_189` | `terraform/aws/ec2.tf` | 32 | Ensure EBS Volume is encrypted by KMS using a customer managed Key (CMK) |
 | HIGH | Checkov | `CKV_AWS_18` | `terraform/aws/ec2.tf` | 268 | Ensure the S3 bucket has access logging enabled |
@@ -101,52 +101,52 @@ _Généré le Fri Jun 26 12:41:32 UTC 2026 — agrégation Checkov + Gitleaks (S
 | HIGH | Checkov | `CKV_AWS_283` | `terraform/aws/es.tf` | 30 | Ensure no IAM policies documents allow ALL or any AWS principal permissions to the resource |
 | HIGH | Checkov | `CKV_AWS_293` | `terraform/aws/db-app.tf` | 1 | Ensure that AWS database instances have deletion protection enabled |
 | HIGH | Checkov | `CKV_AWS_313` | `terraform/aws/rds.tf` | 1 | Ensure RDS cluster configured to copy tags to snapshots |
-| HIGH | Checkov | `CKV_AWS_313` | `terraform/aws/rds.tf` | 113 | Ensure RDS cluster configured to copy tags to snapshots |
-| HIGH | Checkov | `CKV_AWS_313` | `terraform/aws/rds.tf` | 130 | Ensure RDS cluster configured to copy tags to snapshots |
-| HIGH | Checkov | `CKV_AWS_313` | `terraform/aws/rds.tf` | 17 | Ensure RDS cluster configured to copy tags to snapshots |
-| HIGH | Checkov | `CKV_AWS_313` | `terraform/aws/rds.tf` | 33 | Ensure RDS cluster configured to copy tags to snapshots |
-| HIGH | Checkov | `CKV_AWS_313` | `terraform/aws/rds.tf` | 49 | Ensure RDS cluster configured to copy tags to snapshots |
-| HIGH | Checkov | `CKV_AWS_313` | `terraform/aws/rds.tf` | 65 | Ensure RDS cluster configured to copy tags to snapshots |
-| HIGH | Checkov | `CKV_AWS_313` | `terraform/aws/rds.tf` | 81 | Ensure RDS cluster configured to copy tags to snapshots |
-| HIGH | Checkov | `CKV_AWS_313` | `terraform/aws/rds.tf` | 97 | Ensure RDS cluster configured to copy tags to snapshots |
+| HIGH | Checkov | `CKV_AWS_313` | `terraform/aws/rds.tf` | 103 | Ensure RDS cluster configured to copy tags to snapshots |
+| HIGH | Checkov | `CKV_AWS_313` | `terraform/aws/rds.tf` | 120 | Ensure RDS cluster configured to copy tags to snapshots |
+| HIGH | Checkov | `CKV_AWS_313` | `terraform/aws/rds.tf` | 138 | Ensure RDS cluster configured to copy tags to snapshots |
+| HIGH | Checkov | `CKV_AWS_313` | `terraform/aws/rds.tf` | 18 | Ensure RDS cluster configured to copy tags to snapshots |
+| HIGH | Checkov | `CKV_AWS_313` | `terraform/aws/rds.tf` | 35 | Ensure RDS cluster configured to copy tags to snapshots |
+| HIGH | Checkov | `CKV_AWS_313` | `terraform/aws/rds.tf` | 52 | Ensure RDS cluster configured to copy tags to snapshots |
+| HIGH | Checkov | `CKV_AWS_313` | `terraform/aws/rds.tf` | 69 | Ensure RDS cluster configured to copy tags to snapshots |
+| HIGH | Checkov | `CKV_AWS_313` | `terraform/aws/rds.tf` | 86 | Ensure RDS cluster configured to copy tags to snapshots |
 | HIGH | Checkov | `CKV_AWS_317` | `terraform/aws/es.tf` | 1 | Ensure Elasticsearch Domain Audit Logging is enabled |
 | HIGH | Checkov | `CKV_AWS_318` | `terraform/aws/es.tf` | 1 | Ensure Elasticsearch domains are configured with at least three dedicated master nodes for HA |
 | HIGH | Checkov | `CKV_AWS_324` | `terraform/aws/rds.tf` | 1 | Ensure that RDS Cluster log capture is enabled |
-| HIGH | Checkov | `CKV_AWS_324` | `terraform/aws/rds.tf` | 113 | Ensure that RDS Cluster log capture is enabled |
-| HIGH | Checkov | `CKV_AWS_324` | `terraform/aws/rds.tf` | 130 | Ensure that RDS Cluster log capture is enabled |
-| HIGH | Checkov | `CKV_AWS_324` | `terraform/aws/rds.tf` | 17 | Ensure that RDS Cluster log capture is enabled |
-| HIGH | Checkov | `CKV_AWS_324` | `terraform/aws/rds.tf` | 33 | Ensure that RDS Cluster log capture is enabled |
-| HIGH | Checkov | `CKV_AWS_324` | `terraform/aws/rds.tf` | 49 | Ensure that RDS Cluster log capture is enabled |
-| HIGH | Checkov | `CKV_AWS_324` | `terraform/aws/rds.tf` | 65 | Ensure that RDS Cluster log capture is enabled |
-| HIGH | Checkov | `CKV_AWS_324` | `terraform/aws/rds.tf` | 81 | Ensure that RDS Cluster log capture is enabled |
-| HIGH | Checkov | `CKV_AWS_324` | `terraform/aws/rds.tf` | 97 | Ensure that RDS Cluster log capture is enabled |
+| HIGH | Checkov | `CKV_AWS_324` | `terraform/aws/rds.tf` | 103 | Ensure that RDS Cluster log capture is enabled |
+| HIGH | Checkov | `CKV_AWS_324` | `terraform/aws/rds.tf` | 120 | Ensure that RDS Cluster log capture is enabled |
+| HIGH | Checkov | `CKV_AWS_324` | `terraform/aws/rds.tf` | 138 | Ensure that RDS Cluster log capture is enabled |
+| HIGH | Checkov | `CKV_AWS_324` | `terraform/aws/rds.tf` | 18 | Ensure that RDS Cluster log capture is enabled |
+| HIGH | Checkov | `CKV_AWS_324` | `terraform/aws/rds.tf` | 35 | Ensure that RDS Cluster log capture is enabled |
+| HIGH | Checkov | `CKV_AWS_324` | `terraform/aws/rds.tf` | 52 | Ensure that RDS Cluster log capture is enabled |
+| HIGH | Checkov | `CKV_AWS_324` | `terraform/aws/rds.tf` | 69 | Ensure that RDS Cluster log capture is enabled |
+| HIGH | Checkov | `CKV_AWS_324` | `terraform/aws/rds.tf` | 86 | Ensure that RDS Cluster log capture is enabled |
 | HIGH | Checkov | `CKV_AWS_325` | `terraform/aws/rds.tf` | 1 | Ensure that RDS Cluster audit logging is enabled for MySQL engine |
-| HIGH | Checkov | `CKV_AWS_325` | `terraform/aws/rds.tf` | 113 | Ensure that RDS Cluster audit logging is enabled for MySQL engine |
-| HIGH | Checkov | `CKV_AWS_325` | `terraform/aws/rds.tf` | 130 | Ensure that RDS Cluster audit logging is enabled for MySQL engine |
-| HIGH | Checkov | `CKV_AWS_325` | `terraform/aws/rds.tf` | 17 | Ensure that RDS Cluster audit logging is enabled for MySQL engine |
-| HIGH | Checkov | `CKV_AWS_325` | `terraform/aws/rds.tf` | 33 | Ensure that RDS Cluster audit logging is enabled for MySQL engine |
-| HIGH | Checkov | `CKV_AWS_325` | `terraform/aws/rds.tf` | 49 | Ensure that RDS Cluster audit logging is enabled for MySQL engine |
-| HIGH | Checkov | `CKV_AWS_325` | `terraform/aws/rds.tf` | 65 | Ensure that RDS Cluster audit logging is enabled for MySQL engine |
-| HIGH | Checkov | `CKV_AWS_325` | `terraform/aws/rds.tf` | 81 | Ensure that RDS Cluster audit logging is enabled for MySQL engine |
-| HIGH | Checkov | `CKV_AWS_325` | `terraform/aws/rds.tf` | 97 | Ensure that RDS Cluster audit logging is enabled for MySQL engine |
+| HIGH | Checkov | `CKV_AWS_325` | `terraform/aws/rds.tf` | 103 | Ensure that RDS Cluster audit logging is enabled for MySQL engine |
+| HIGH | Checkov | `CKV_AWS_325` | `terraform/aws/rds.tf` | 120 | Ensure that RDS Cluster audit logging is enabled for MySQL engine |
+| HIGH | Checkov | `CKV_AWS_325` | `terraform/aws/rds.tf` | 138 | Ensure that RDS Cluster audit logging is enabled for MySQL engine |
+| HIGH | Checkov | `CKV_AWS_325` | `terraform/aws/rds.tf` | 18 | Ensure that RDS Cluster audit logging is enabled for MySQL engine |
+| HIGH | Checkov | `CKV_AWS_325` | `terraform/aws/rds.tf` | 35 | Ensure that RDS Cluster audit logging is enabled for MySQL engine |
+| HIGH | Checkov | `CKV_AWS_325` | `terraform/aws/rds.tf` | 52 | Ensure that RDS Cluster audit logging is enabled for MySQL engine |
+| HIGH | Checkov | `CKV_AWS_325` | `terraform/aws/rds.tf` | 69 | Ensure that RDS Cluster audit logging is enabled for MySQL engine |
+| HIGH | Checkov | `CKV_AWS_325` | `terraform/aws/rds.tf` | 86 | Ensure that RDS Cluster audit logging is enabled for MySQL engine |
 | HIGH | Checkov | `CKV_AWS_326` | `terraform/aws/rds.tf` | 1 | Ensure that RDS Aurora Clusters have backtracking enabled |
-| HIGH | Checkov | `CKV_AWS_326` | `terraform/aws/rds.tf` | 113 | Ensure that RDS Aurora Clusters have backtracking enabled |
-| HIGH | Checkov | `CKV_AWS_326` | `terraform/aws/rds.tf` | 130 | Ensure that RDS Aurora Clusters have backtracking enabled |
-| HIGH | Checkov | `CKV_AWS_326` | `terraform/aws/rds.tf` | 17 | Ensure that RDS Aurora Clusters have backtracking enabled |
-| HIGH | Checkov | `CKV_AWS_326` | `terraform/aws/rds.tf` | 33 | Ensure that RDS Aurora Clusters have backtracking enabled |
-| HIGH | Checkov | `CKV_AWS_326` | `terraform/aws/rds.tf` | 49 | Ensure that RDS Aurora Clusters have backtracking enabled |
-| HIGH | Checkov | `CKV_AWS_326` | `terraform/aws/rds.tf` | 65 | Ensure that RDS Aurora Clusters have backtracking enabled |
-| HIGH | Checkov | `CKV_AWS_326` | `terraform/aws/rds.tf` | 81 | Ensure that RDS Aurora Clusters have backtracking enabled |
-| HIGH | Checkov | `CKV_AWS_326` | `terraform/aws/rds.tf` | 97 | Ensure that RDS Aurora Clusters have backtracking enabled |
+| HIGH | Checkov | `CKV_AWS_326` | `terraform/aws/rds.tf` | 103 | Ensure that RDS Aurora Clusters have backtracking enabled |
+| HIGH | Checkov | `CKV_AWS_326` | `terraform/aws/rds.tf` | 120 | Ensure that RDS Aurora Clusters have backtracking enabled |
+| HIGH | Checkov | `CKV_AWS_326` | `terraform/aws/rds.tf` | 138 | Ensure that RDS Aurora Clusters have backtracking enabled |
+| HIGH | Checkov | `CKV_AWS_326` | `terraform/aws/rds.tf` | 18 | Ensure that RDS Aurora Clusters have backtracking enabled |
+| HIGH | Checkov | `CKV_AWS_326` | `terraform/aws/rds.tf` | 35 | Ensure that RDS Aurora Clusters have backtracking enabled |
+| HIGH | Checkov | `CKV_AWS_326` | `terraform/aws/rds.tf` | 52 | Ensure that RDS Aurora Clusters have backtracking enabled |
+| HIGH | Checkov | `CKV_AWS_326` | `terraform/aws/rds.tf` | 69 | Ensure that RDS Aurora Clusters have backtracking enabled |
+| HIGH | Checkov | `CKV_AWS_326` | `terraform/aws/rds.tf` | 86 | Ensure that RDS Aurora Clusters have backtracking enabled |
 | HIGH | Checkov | `CKV_AWS_327` | `terraform/aws/rds.tf` | 1 | Ensure RDS Clusters are encrypted using KMS CMKs |
-| HIGH | Checkov | `CKV_AWS_327` | `terraform/aws/rds.tf` | 113 | Ensure RDS Clusters are encrypted using KMS CMKs |
-| HIGH | Checkov | `CKV_AWS_327` | `terraform/aws/rds.tf` | 130 | Ensure RDS Clusters are encrypted using KMS CMKs |
-| HIGH | Checkov | `CKV_AWS_327` | `terraform/aws/rds.tf` | 17 | Ensure RDS Clusters are encrypted using KMS CMKs |
-| HIGH | Checkov | `CKV_AWS_327` | `terraform/aws/rds.tf` | 33 | Ensure RDS Clusters are encrypted using KMS CMKs |
-| HIGH | Checkov | `CKV_AWS_327` | `terraform/aws/rds.tf` | 49 | Ensure RDS Clusters are encrypted using KMS CMKs |
-| HIGH | Checkov | `CKV_AWS_327` | `terraform/aws/rds.tf` | 65 | Ensure RDS Clusters are encrypted using KMS CMKs |
-| HIGH | Checkov | `CKV_AWS_327` | `terraform/aws/rds.tf` | 81 | Ensure RDS Clusters are encrypted using KMS CMKs |
-| HIGH | Checkov | `CKV_AWS_327` | `terraform/aws/rds.tf` | 97 | Ensure RDS Clusters are encrypted using KMS CMKs |
+| HIGH | Checkov | `CKV_AWS_327` | `terraform/aws/rds.tf` | 103 | Ensure RDS Clusters are encrypted using KMS CMKs |
+| HIGH | Checkov | `CKV_AWS_327` | `terraform/aws/rds.tf` | 120 | Ensure RDS Clusters are encrypted using KMS CMKs |
+| HIGH | Checkov | `CKV_AWS_327` | `terraform/aws/rds.tf` | 138 | Ensure RDS Clusters are encrypted using KMS CMKs |
+| HIGH | Checkov | `CKV_AWS_327` | `terraform/aws/rds.tf` | 18 | Ensure RDS Clusters are encrypted using KMS CMKs |
+| HIGH | Checkov | `CKV_AWS_327` | `terraform/aws/rds.tf` | 35 | Ensure RDS Clusters are encrypted using KMS CMKs |
+| HIGH | Checkov | `CKV_AWS_327` | `terraform/aws/rds.tf` | 52 | Ensure RDS Clusters are encrypted using KMS CMKs |
+| HIGH | Checkov | `CKV_AWS_327` | `terraform/aws/rds.tf` | 69 | Ensure RDS Clusters are encrypted using KMS CMKs |
+| HIGH | Checkov | `CKV_AWS_327` | `terraform/aws/rds.tf` | 86 | Ensure RDS Clusters are encrypted using KMS CMKs |
 | HIGH | Checkov | `CKV_AWS_347` | `terraform/aws/neptune.tf` | 1 | Ensure Neptune is encrypted by KMS using a customer managed Key (CMK) |
 | HIGH | Checkov | `CKV_AWS_356` | `terraform/aws/es.tf` | 30 | Ensure no IAM policies documents allow "*" as a statement's resource for restrictable actions |
 | HIGH | Checkov | `CKV_AWS_359` | `terraform/aws/neptune.tf` | 1 | Neptune DB clusters should have IAM database authentication enabled |
@@ -168,13 +168,13 @@ _Généré le Fri Jun 26 12:41:32 UTC 2026 — agrégation Checkov + Gitleaks (S
 | HIGH | Checkov | `CKV_AWS_8` | `terraform/aws/ec2.tf` | 1 | Ensure all data stored in the Launch configuration or instance Elastic Blocks Store is securely encrypted |
 | HIGH | Checkov | `CKV_AWS_92` | `terraform/aws/elb.tf` | 2 | Ensure the ELB has access logging enabled |
 | HIGH | Checkov | `CKV_AWS_96` | `terraform/aws/rds.tf` | 1 | Ensure all data stored in Aurora is securely encrypted at rest |
-| HIGH | Checkov | `CKV_AWS_96` | `terraform/aws/rds.tf` | 113 | Ensure all data stored in Aurora is securely encrypted at rest |
-| HIGH | Checkov | `CKV_AWS_96` | `terraform/aws/rds.tf` | 130 | Ensure all data stored in Aurora is securely encrypted at rest |
-| HIGH | Checkov | `CKV_AWS_96` | `terraform/aws/rds.tf` | 17 | Ensure all data stored in Aurora is securely encrypted at rest |
-| HIGH | Checkov | `CKV_AWS_96` | `terraform/aws/rds.tf` | 33 | Ensure all data stored in Aurora is securely encrypted at rest |
-| HIGH | Checkov | `CKV_AWS_96` | `terraform/aws/rds.tf` | 49 | Ensure all data stored in Aurora is securely encrypted at rest |
-| HIGH | Checkov | `CKV_AWS_96` | `terraform/aws/rds.tf` | 65 | Ensure all data stored in Aurora is securely encrypted at rest |
-| HIGH | Checkov | `CKV_AWS_96` | `terraform/aws/rds.tf` | 81 | Ensure all data stored in Aurora is securely encrypted at rest |
-| HIGH | Checkov | `CKV_AWS_96` | `terraform/aws/rds.tf` | 97 | Ensure all data stored in Aurora is securely encrypted at rest |
+| HIGH | Checkov | `CKV_AWS_96` | `terraform/aws/rds.tf` | 103 | Ensure all data stored in Aurora is securely encrypted at rest |
+| HIGH | Checkov | `CKV_AWS_96` | `terraform/aws/rds.tf` | 120 | Ensure all data stored in Aurora is securely encrypted at rest |
+| HIGH | Checkov | `CKV_AWS_96` | `terraform/aws/rds.tf` | 138 | Ensure all data stored in Aurora is securely encrypted at rest |
+| HIGH | Checkov | `CKV_AWS_96` | `terraform/aws/rds.tf` | 18 | Ensure all data stored in Aurora is securely encrypted at rest |
+| HIGH | Checkov | `CKV_AWS_96` | `terraform/aws/rds.tf` | 35 | Ensure all data stored in Aurora is securely encrypted at rest |
+| HIGH | Checkov | `CKV_AWS_96` | `terraform/aws/rds.tf` | 52 | Ensure all data stored in Aurora is securely encrypted at rest |
+| HIGH | Checkov | `CKV_AWS_96` | `terraform/aws/rds.tf` | 69 | Ensure all data stored in Aurora is securely encrypted at rest |
+| HIGH | Checkov | `CKV_AWS_96` | `terraform/aws/rds.tf` | 86 | Ensure all data stored in Aurora is securely encrypted at rest |
 | HIGH | Checkov | `CKV_DOCKER_2` | `terraform/aws/resources/Dockerfile` | 1 | Ensure that HEALTHCHECK instructions have been added to container images |
 | HIGH | Checkov | `CKV_DOCKER_3` | `terraform/aws/resources/Dockerfile` | 1 | Ensure that a user for the container has been created |
