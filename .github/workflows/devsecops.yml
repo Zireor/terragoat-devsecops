@@ -127,7 +127,10 @@ jobs:
         ports:
           - 4566:4566
         env:
-          SERVICES: s3,iam,kms,ecr,ec2
+          # sts est INDISPENSABLE : le provider AWS appelle GetCallerIdentity au
+          # démarrage (et data.aws_caller_identity l'utilise). Sans lui, l'apply
+          # part en retry infini sur des erreurs InternalFailure.
+          SERVICES: s3,iam,kms,ecr,ec2,sts
 
     steps:
       - name: Récupérer le code
@@ -145,20 +148,12 @@ jobs:
       # tflocal injecte tout seul les endpoints LocalStack + des credentials factices.
       - name: Déployer sur LocalStack (apply ciblé)
         working-directory: terraform/aws
-        env:
-          TF_LOG: INFO   # montre chaque appel API → révèle où ça coince
         run: |
           set -o pipefail
           tflocal init
 
-          # --- Diagnostic : LocalStack répond-il vraiment ? ---
-          echo "### Health LocalStack ###"
-          curl -s http://localhost:4566/_localstack/health | head -c 2000 || true
-          echo
-          echo "### Test STS (data.aws_caller_identity) ###"
-          timeout 30 awslocal sts get-caller-identity || echo "STS KO/timeout"
-          echo "### Test S3 ###"
-          timeout 30 awslocal s3 ls || echo "S3 KO/timeout"
+          # Sanity check : STS doit répondre (sinon le provider boucle en retry).
+          awslocal sts get-caller-identity
 
           # --- Phase 1 : ressources rapides et 100% supportées (S3/IAM/KMS/ECR) ---
           timeout 300 tflocal apply -auto-approve \
