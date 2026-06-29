@@ -40,8 +40,9 @@ Objectifs détaillés :
 | `lint` | TFLint | Qualité / modernité du code Terraform | rapport lint |
 | `secrets` | Gitleaks | Détection de secrets en dur | rapport secrets |
 | `security` | Checkov | Mauvaises configurations de sécurité | rapports SARIF / texte |
-| `docs` | terraform-docs | Documentation auto de l'infrastructure | README généré |
-| `deploy` | Terraform + LocalStack | Déploiement sur AWS mocké | logs de plan/apply |
+| `deploy` | tflocal + LocalStack | Déploiement réel sur AWS mocké (S3/IAM/KMS) | logs de plan/apply |
+| `docs` | terraform-docs | Documentation auto de l'infrastructure | README généré (committé) |
+| `report` | jq (agrégation SARIF) | Rapport de sécurité consolidé trié par criticité | `SECURITY-REPORT.md` (committé) |
 
 > Déclencheurs (`triggers`) : `push` sur `main` et `pull_request` — afin de bloquer
 > tout code non conforme **avant** la fusion (principe *shift-left security*).
@@ -175,6 +176,14 @@ d'IP publique automatique).
   contre les attaques de **supply-chain**.
 - **Jobs séparés** (lint / secrets / security / docs / deploy) → exécution parallèle,
   isolation des échecs, lisibilité.
+- **Protection de la branche `main` (workflow par PR)** : `main` n'est jamais poussée
+  en direct. Tout changement passe par une branche `develop` (ou de feature) puis une
+  **pull request** vers `main`. La PR déclenche la pipeline (`pull_request` dans les
+  triggers) : on **vérifie que tous les jobs passent au vert avant la fusion** (statuts
+  requis), et non après coup sur `main`. C'est la mise en application concrète du
+  **shift-left** : le code non conforme est bloqué *avant* d'entrer dans la branche de
+  référence. (À durcir côté GitHub par une *branch protection rule* : interdiction du
+  push direct, PR + checks obligatoires, revue requise.)
 - **Détection de secrets en amont** : la *Push Protection* GitHub a bloqué les clés AWS
   dès le push initial, avant même la pipeline (défense en profondeur).
 - **Documentation rédigée au fil de l'eau** → traçabilité des décisions et des risques.
@@ -217,7 +226,87 @@ d'IP publique automatique).
 
 ---
 
-## 7. Rapports d'analyse générés
+## 7. Déploiement sur LocalStack
+
+Après les étapes d'analyse, la pipeline **déploie réellement** l'infrastructure sur
+**LocalStack** (émulateur AWS), afin de prouver que le code Terraform n'est pas seulement
+*bien écrit* mais aussi *applicable* — ce qu'aucun scanner statique ne vérifie.
+
+### 7.1 Architecture du stage `deploy`
+
+- **LocalStack en *service container*** : le job démarre un conteneur
+  `localstack/localstack:3` exposé sur `localhost:4566`, avec
+  `SERVICES: s3,iam,kms,ec2,sts`.
+- **`tflocal`** (paquet `terraform-local`) : surcouche de Terraform qui **injecte
+  automatiquement** les *endpoints* LocalStack et des **credentials factices**. Avantage :
+  le `providers.tf` reste **intact** (aucun bloc `provider` spécifique à LocalStack à
+  maintenir, donc aucun risque d'embarquer une config de test en production).
+- **`needs: [lint, secrets, security]`** : on ne déploie **que si** l'analyse de sécurité
+  est passée (principe *shift-left* : pas de déploiement sur du code non vérifié).
+- **Vérification post-déploiement** : `awslocal s3 ls`, `kms list-keys`,
+  `iam list-users` confirment que les ressources existent réellement dans l'émulateur
+  (les logs sont conservés en artefact `localstack-deploy-report`).
+
+### 7.2 Périmètre déployé et choix d'un `apply` ciblé
+
+Le déploiement utilise un **`apply -target`** restreint aux ressources **S3, IAM et KMS**
+(**16 ressources** créées avec succès : 5 buckets + 5 *public access blocks* + 1 objet S3
++ 1 clé + 1 alias KMS + 1 utilisateur + 1 clé d'accès + 1 politique IAM). Ce choix est
+**assumé** : LocalStack en édition **Community** (gratuite) ne supporte pas l'ensemble des
+services AWS. Les ressources hors périmètre sont écartées en connaissance de cause :
+
+| Service | Statut LocalStack Community | Décision |
+|---------|----------------------------|----------|
+| S3 / IAM / KMS | ✅ Supportés | **Déployés** |
+| EC2 | ⚠️ Partiel (instance ne passe pas en `running`) | Tenté en **phase bornée** (voir 7.3) |
+| ECR | ❌ Feature **Pro** (`CreateRepository` → HTTP 501) | Exclu |
+| RDS / EKS / Neptune / ElasticSearch | ❌ Features **Pro** | Exclus |
+
+> L'`apply` ciblé produit un avertissement *« Resource targeting is in effect »* : c'est
+> **attendu** et non une erreur — Terraform signale simplement qu'on n'applique qu'un
+> sous-ensemble de la configuration.
+
+### 7.3 EC2 : un déploiement borné dans le temps
+
+Sur LocalStack Community, l'instance EC2 ne transite jamais vers l'état `running` que le
+provider AWS attend → Terraform **patiente indéfiniment**. La solution retenue **garde la
+tentative de déploiement EC2** mais en **deux phases** :
+
+1. **Phase 1** — S3/IAM/KMS : rapides et fiables, **bloquantes** (cœur de la démo).
+2. **Phase 2** — EC2 : encapsulée dans `timeout 240` et suffixée de `|| echo …` → la
+   création est tentée pendant **4 min maximum**, et si LocalStack bloque, le job **n'échoue
+   pas** (message non bloquant). On obtient ainsi un déploiement **toujours vert** sans
+   jamais subir d'attente infinie.
+
+### 7.4 Compatibilité avec le provider AWS v5
+
+TerraGoat ayant été écrit pour une version ancienne du provider, le déploiement avec
+**AWS provider v5** a nécessité quelques corrections de schéma (sans rapport avec la
+sécurité, donc sans impact sur l'exercice TerraGoat) :
+
+| Problème (provider v5) | Fichier | Correction |
+|------------------------|---------|------------|
+| `aws_db_instance.name` supprimé | `db-app.tf` | → `db_name` (argument **et** référence dans le `user_data`) |
+| `aws_rds_cluster.engine` désormais requis | `rds.tf` (×9) | ajout de `engine = "aurora-mysql"` |
+
+### 7.5 Pièges rencontrés et résolus (journal de débogage)
+
+Le déploiement a demandé un vrai travail d'investigation, riche d'enseignements :
+
+| Symptôme | Cause racine | Résolution |
+|----------|--------------|------------|
+| Conteneur quitte au démarrage (`exit 55`, *License activation failed*) | Le tag `:latest` exige désormais un `LOCALSTACK_AUTH_TOKEN` (licence) | Épingler `localstack/localstack:3` (Community, sans token) |
+| `apply` **figé** sans aucune sortie après l'init (~30 min) | Service **`sts` absent** de `SERVICES` → le provider boucle en *retry* sur `GetCallerIdentity` (erreurs `InternalFailure`) | Ajouter `sts` à `SERVICES` |
+| Échec création ECR (HTTP 501) | ECR = feature **Pro** | Retirer ECR du périmètre |
+
+> Méthode de diagnostic clé (réutilisable) : interroger `GET /_localstack/health` pour
+> lister l'état réel des services, et tester chaque appel sensible avec `awslocal`
+> (`awslocal sts get-caller-identity`) **avant** de lancer Terraform. Cela a permis
+> d'isoler la cause du gel en **un seul run** au lieu de subir des attentes en aveugle.
+
+---
+
+## 8. Rapports d'analyse générés
 
 Les rapports sont produits **automatiquement** par la pipeline et conservés en tant
 qu'**artefacts** GitHub Actions (téléchargeables depuis l'onglet *Actions* → run → section
@@ -228,13 +317,28 @@ qu'**artefacts** GitHub Actions (téléchargeables depuis l'onglet *Actions* →
 | Lint Terraform | TFLint | texte / compact |
 | Secrets | Gitleaks | JSON / SARIF |
 | Mauvaises configurations | Checkov | CLI / SARIF |
-| Documentation infra (`TERRAFORM.md` : providers / inputs / outputs) | terraform-docs | Markdown |
+| Documentation infra (providers / inputs / outputs, injectée dans `README.md`) | terraform-docs | Markdown |
+| Déploiement LocalStack (apply + vérification `awslocal`) | tflocal | texte |
+| **Rapport de sécurité consolidé** (`SECURITY-REPORT.md`) | jq (agrégation SARIF) | Markdown |
 
-_(Liens vers les runs et artefacts à ajouter une fois la pipeline complète.)_
+### Exploitation des findings : deux niveaux
+
+Au-delà des artefacts bruts, les résultats de sécurité sont rendus **réellement
+exploitables** :
+
+1. **Onglet *Security* de GitHub** (*Code scanning*) : les SARIF de Checkov et Gitleaks
+   sont publiés via `github/codeql-action/upload-sarif`. Chaque *finding* apparaît avec sa
+   **criticité**, son **fichier:ligne** cliquable, sa règle, la déduplication et
+   l'historique — et des **annotations directes dans les pull requests**.
+2. **Rapport consolidé `SECURITY-REPORT.md`** : le job `report` agrège **tous** les SARIF
+   avec `jq` en **un seul tableau trié par criticité** (HIGH / MEDIUM / LOW), affiché dans
+   le résumé du run (`$GITHUB_STEP_SUMMARY`) **et committé dans le dépôt** (fichier
+   versionné, consultable directement sur GitHub). Mapping appliqué : niveau SARIF
+   `error` → **HIGH**, `warning` → **MEDIUM**, `note` → **LOW**.
 
 ---
 
-## 8. Périmètre du projet
+## 9. Périmètre du projet
 
 Le projet est volontairement **recentré sur le module AWS** (`terraform/aws/`) :
 - c'est le cloud effectivement **déployé** (sur LocalStack, qui émule AWS) ;
@@ -249,7 +353,7 @@ chaîne de détection et de correction.
 
 ---
 
-## 9. Note sur le dépôt
+## 10. Note sur le dépôt
 
 TerraGoat (`bridgecrewio/terragoat`) est un dépôt **volontairement vulnérable** conçu
 pour l'entraînement. Le grand nombre de vulnérabilités détectées est donc **attendu** :
