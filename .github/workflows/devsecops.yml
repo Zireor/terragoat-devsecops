@@ -40,7 +40,7 @@ jobs:
 
       - name: Conserver le rapport TFLint
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: tflint-report
           path: reports/tflint-report.md
@@ -67,7 +67,7 @@ jobs:
 
       - name: Conserver les rapports Gitleaks
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: gitleak-report
           path: reports/
@@ -99,7 +99,7 @@ jobs:
 
       - name: Conserver les rapports Checkov
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: checkov-report
           path: reports/
@@ -199,7 +199,7 @@ jobs:
 
       - name: Conserver les rapports LocalStack
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: localstack-deploy-report
           path: reports/
@@ -232,7 +232,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Récupérer les artefacts des scans
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           path: artifacts
 
@@ -285,7 +285,7 @@ jobs:
 
       - name: Conserver le rapport consolidé
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: security-report
           path: SECURITY-REPORT.md
