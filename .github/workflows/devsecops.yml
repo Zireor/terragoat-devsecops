@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Récupérer le code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Installer TFLint
-        uses: terraform-linters/setup-tflint@v4
+        uses: terraform-linters/setup-tflint@v6
 
       - name: Préparer le dossier de rapports
         run: mkdir -p reports
@@ -40,7 +40,7 @@ jobs:
 
       - name: Conserver le rapport TFLint
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: tflint-report
           path: reports/tflint-report.md
@@ -53,7 +53,7 @@ jobs:
       security-events: write   # requis pour publier le SARIF dans l'onglet Security
     steps:
       - name: Récupérer le code (historique complet)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -67,7 +67,7 @@ jobs:
 
       - name: Conserver les rapports Gitleaks
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: gitleak-report
           path: reports/
@@ -87,7 +87,7 @@ jobs:
       security-events: write   # requis pour publier le SARIF dans l'onglet Security
     steps:
       - name: Récupérer le code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Préparer le dossier de rapports
         run: mkdir -p reports
@@ -99,7 +99,7 @@ jobs:
 
       - name: Conserver les rapports Checkov
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: checkov-report
           path: reports/
@@ -134,10 +134,10 @@ jobs:
 
     steps:
       - name: Récupérer le code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Installer Terraform
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v4
 
       - name: Installer tflocal + awslocal
         run: pip install terraform-local awscli-local
@@ -199,7 +199,7 @@ jobs:
 
       - name: Conserver les rapports LocalStack
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: localstack-deploy-report
           path: reports/
@@ -209,7 +209,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Générer et commiter la doc Terraform
         uses: terraform-docs/gh-actions@v1
@@ -229,10 +229,10 @@ jobs:
       contents: write   # requis pour commiter le rapport dans le repo
     steps:
       - name: Récupérer le code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Récupérer les artefacts des scans
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: artifacts
 
@@ -285,7 +285,7 @@ jobs:
 
       - name: Conserver le rapport consolidé
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: security-report
           path: SECURITY-REPORT.md
